@@ -1,0 +1,104 @@
+﻿<Window x:Class="ScreenBuilderApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScreenBuilderApp"
+         xmlns:vm="clr-namespace:ScreenBuilderApp.ViewModel"
+        mc:Ignorable="d"
+        Title="Screen Builder" Height="450" Width="800">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ToolboxItem}">
+            <Grid IsHitTestVisible="False" >
+                <ContentControl x:Name="ContentHolder"  Content="{Binding}"></ContentControl>
+
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Name}" Value="Textbox">
+                    <Setter Property="ContentTemplate" TargetName="ContentHolder">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <TextBox Width="100"></TextBox>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Name}" Value="Label">
+                    <Setter Property="ContentTemplate" TargetName="ContentHolder">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <TextBlock Text="Label"></TextBlock>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Name}" Value="Button">
+                    <Setter Property="ContentTemplate" TargetName="ContentHolder">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <Button Content="Click"></Button>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Name}" Value="Checkbox">
+                    <Setter Property="ContentTemplate" TargetName="ContentHolder">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <CheckBox Content="Selection"></CheckBox>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid x:Name="ContainerGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- First column with controls list -->
+        <StackPanel Grid.Column="0" >
+            <TextBlock Text="Toolbox:" />
+            <ListBox x:Name="ToolboxList" ItemsSource="{Binding Toolbox}" SelectionChanged="ToolboxList_SelectionChanged" DisplayMemberPath="Name">
+
+            </ListBox>
+        </StackPanel>
+
+        <!-- Second column container window -->
+        <Grid Grid.Column="1" Background="Yellow">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="90*" />
+                <ColumnDefinition Width="10*" />
+            </Grid.ColumnDefinitions>
+
+
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="9*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <ListBox x:Name="AddedControls" Grid.Column="1"  PreviewMouseDown="AddedControls_PreviewMouseDown" DragOver="AddedControls_DragOver"  ItemsSource="{Binding SelectedControls}" AllowDrop="True">
+                    <ListBox.Resources>
+                        <Style TargetType="ListBoxItem">                            
+                            <EventSetter Event="Drop" Handler="AddedControls_Drop"></EventSetter>
+                        </Style>
+                    </ListBox.Resources>
+
+                </ListBox>
+            </Grid>
+            <Canvas x:Name="AnimationCanvas" Panel.ZIndex="99" Grid.ColumnSpan="2">
+                <StackPanel x:Name="AnimateElement" Visibility="Collapsed">
+                    <ContentControl Content="{Binding SelectedControl}"></ContentControl>
+                </StackPanel>
+            </Canvas>
+        </Grid>
+    </Grid>
+</Window>
